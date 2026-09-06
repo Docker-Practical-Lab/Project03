@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
+const User = require("./User");
+
 dotenv.config();
 
 const app = express();
@@ -19,6 +21,34 @@ app.get("/", (req, res) => {
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not Found" });
+});
+
+app.post("/api/users", async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({ error: "Name and email are required" });
+    }
+
+    const newUser = new User({ name, email });
+    await newUser.save();
+
+    res.status(201).json({ message: "User created successfully", user: newUser });
+  } catch (err) {
+    console.error("Error creating user:", err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Error fetching users:", err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 const connectDB = async () => {
