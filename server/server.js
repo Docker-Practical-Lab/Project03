@@ -19,10 +19,6 @@ app.get("/", (req, res) => {
   res.json({ status: "ok", message: "Server is running" });
 });
 
-app.use((req, res) => {
-  res.status(404).json({ error: "Not Found" });
-});
-
 app.post("/api/users", async (req, res) => {
   try {
     const { name, email } = req.body;
@@ -44,11 +40,15 @@ app.post("/api/users", async (req, res) => {
 app.get("/api/users", async (req, res) => {
   try {
     const users = await User.find();
-    res.status(200).json(users);
+    res.status(200).json({ message: "Users fetched successfully", users });
   } catch (err) {
     console.error("Error fetching users:", err.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Not Found" });
 });
 
 const connectDB = async () => {
