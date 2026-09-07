@@ -1,0 +1,33 @@
+# Dependencies
+node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files (may contain secrets)
+.env
+.env.*
+*.local
+
+# Version control
+.git
+.gitignore
+
+# Docker files (not needed inside the image)
+Dockerfile
+.dockerignore
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.swp
+
+# Test / coverage
+coverage
