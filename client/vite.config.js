@@ -4,9 +4,10 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: process.env.HOST || 'localhost',
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: process.env.API_PROXY_TARGET || 'http://localhost:5000',
         changeOrigin: true,
       },
     },

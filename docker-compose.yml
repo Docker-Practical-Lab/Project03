@@ -1,0 +1,56 @@
+name: project03
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: project03-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - project03-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  server:
+    build:
+      context: ./server
+    container_name: project03-server
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://mongodb:27017/project03
+    ports:
+      - "5000:5000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - project03-net
+
+  client:
+    build:
+      context: ./client
+    container_name: project03-client
+    restart: unless-stopped
+    environment:
+      API_PROXY_TARGET: http://server:5000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+    networks:
+      - project03-net
+
+volumes:
+  mongodb_data:
+
+networks:
+  project03-net:
+    driver: bridge
